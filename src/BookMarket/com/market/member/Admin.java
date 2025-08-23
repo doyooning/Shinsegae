@@ -4,7 +4,7 @@ public class Admin extends Person {
 	private String id = "Admin";
 	private String password = "Admin1234";
 
-	public Admin(String name, int phone) {
+	public Admin(String name, String phone) {
 		super(name, phone);
 	}
 

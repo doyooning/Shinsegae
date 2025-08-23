@@ -1,5 +1,11 @@
 package BookMarket.com.market.bookitem;
 
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public abstract class Item {
     String bookId;
     String name;
@@ -10,18 +16,4 @@ public abstract class Item {
         this.name = name;
         this.unitPrice = unitPrice;
     }
-
-    abstract String getBookId();
-
-    abstract String getName();
-
-    abstract int getUnitPrice();
-
-    abstract void setBookId(String bookId);
-
-    abstract void setName(String name);
-
-    abstract void setUnitPrice(int unitPrice);
-
-
 }

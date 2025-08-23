@@ -9,5 +9,5 @@ public interface CartInterface {
     boolean isCartInBook(String Id);
     void insertBook(Book p);
     void removeCart(int numId);
-    void deleteBook();
+    void clearBook();
 }
