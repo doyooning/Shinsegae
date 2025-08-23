@@ -2,6 +2,7 @@ package BookMarket.com.market.main;
 
 import BookMarket.com.market.bookitem.Book;
 import BookMarket.com.market.cart.Cart;
+import BookMarket.com.market.common.ErrorCode;
 import BookMarket.com.market.exception.CartException;
 import BookMarket.com.market.member.Admin;
 import BookMarket.com.market.member.User;
@@ -20,6 +21,8 @@ public class Welcome {
 	static Cart mCart = new Cart();
 	static User mUser;
     static SimpleDateFormat sdf = new SimpleDateFormat("yyMMddhhmmss");
+    static SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+
     static final String MAIN_MENU_NUM = "[1-9]";
     static boolean flag = false;
     static int mTotalBook = 0;
@@ -66,7 +69,7 @@ public class Welcome {
                             menuCartAddItem(mBookList);
                         }
                         case "5" -> {
-                            menuCartRemoveItemCount();
+                            menuCartUpdateItemCount();
                         }
                         case "6" -> {
                             menuCartRemoveItem();
@@ -88,7 +91,7 @@ public class Welcome {
                 System.out.println(e.getMessage());
                 flag = true;
             } catch (Exception e) {
-                System.out.println("올바르지 않은 메뉴 선택으로 종료합니다.");
+                System.out.println("잘못된 접근입니다.");
                 flag = true;
             }
         }
@@ -182,10 +185,10 @@ public class Welcome {
 	}
 
     // 장바구니 항목 수량 변경
-	public static void menuCartRemoveItemCount() throws CartException {
+	public static void menuCartUpdateItemCount() throws CartException {
 
         if (mCart.mCartCount == 0) {
-            throw new CartException("장비구니에 항목이 없습니다.");
+            throw new CartException(ErrorCode.EMPTY_CARTITEM);
         } else {
             menuCartItemList();
             boolean quit = false;
@@ -216,7 +219,7 @@ public class Welcome {
     // 장바구니의 항목 삭제하기
 	public static void menuCartRemoveItem() throws CartException{
 		if (mCart.mCartCount == 0) {
-			throw new CartException("장비구니에 항목이 없습니다.");
+			throw new CartException(ErrorCode.EMPTY_CARTITEM);
 		} else {
 			menuCartItemList();
 			boolean quit = false;
@@ -237,7 +240,7 @@ public class Welcome {
 					System.out.println("장바구니의 항목을 삭제하겠습니까? Y | N ");
 					str = sc.nextLine();
 					if (str.toUpperCase().equals("Y")) {
-						System.out.println(mCart.mCartItem.get(numId).getBookId() + " 장바구니에서 도서가 삭제되었습니다.");
+						System.out.println(mCart.mCartItem.get(numId).getBookId() + " 도서가 장바구니에서 삭제되었습니다.");
 						mCart.removeCart(numId);
 					}
 					quit = true;
@@ -251,7 +254,7 @@ public class Welcome {
     // 영수증 표시하기
 	public static void menuCartBill() throws CartException{
 		if (mCart.mCartCount == 0) {
-			throw new CartException("장바구니에 항목이 없습니다.");
+			throw new CartException(ErrorCode.EMPTY_CARTITEM);
 		} else {
 			System.out.println("배송받을 분은 고객 정보와 같습니까? Y | N");
 			String str = sc.nextLine();
@@ -262,9 +265,9 @@ public class Welcome {
 			} else {
 				System.out.println("배송받을 고객명을 입력하세요. ");
 				String name = sc.nextLine();
-				System.out.println("배송받을 고객의 연락처를 입력하세요. ");
+				System.out.println("연락처를 입력하세요. ");
 				String phone = sc.nextLine();
-				System.out.println("배송받을 고객의 배송지를 입력하세요. ");
+				System.out.println("배송지를 입력하세요. ");
 				String address = sc.nextLine();
 				printBill(name, phone, address);
 			}
@@ -274,7 +277,6 @@ public class Welcome {
     // 영수증 출력 로직
 	public static void printBill(String name, String phone, String address) {
 		Date date = new Date();
-		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 		String strDate = formatter.format(date);
 		System.out.println();
 		System.out.println("---------------배송받을 고객 정보---------------");
@@ -289,7 +291,7 @@ public class Welcome {
 		}
         System.out.printf("""
                 ---------------------------------------------
-                \\t\\t\\t주문 총금액 : " + %d + "원\\n
+                \\t\\t\\t주문 총금액 :  %d  원\\n
                 ---------------------------------------------
                 \n""", sum);
 	}
@@ -349,7 +351,7 @@ public class Welcome {
 				writeBook[6] = sc.nextLine();
 
 				try {
-					FileWriter fw = new FileWriter("src\\BookMarket\\com\\market\\main\\book.txt", true);
+					FileWriter fw = new FileWriter("src\\BookMarket\\com\\bookitem\\book.txt", true);
 
 					for (int i = 0; i < 7; i++) {
 						fw.write(writeBook[i] + "\n");
@@ -371,7 +373,7 @@ public class Welcome {
     // 도서 목록 불러오는 메서드
 	public static int totalFileToBookList() {
 		try {
-			FileReader fr = new FileReader("src\\BookMarket\\com\\market\\main\\book.txt");
+			FileReader fr = new FileReader("src\\BookMarket\\com\\bookitem\\book.txt");
 			BufferedReader br = new BufferedReader(fr);
 
 			String str;
@@ -394,7 +396,7 @@ public class Welcome {
     // 도서 목록 저장
 	public static void setFileToBookList(ArrayList<Book> booklist) {
 		try {
-			FileReader fr = new FileReader("src\\BookMarket\\com\\market\\main\\book.txt");
+			FileReader fr = new FileReader("src\\BookMarket\\com\\bookitem\\book.txt");
 			BufferedReader br = new BufferedReader(fr);
 
 			String str2;
