@@ -14,7 +14,8 @@ public enum Text {
     HEADER("""
                 \t\t\t\tWelcome to Shopping Mall
                 \t\t\t\tWelcome to Book Market!"""),
-    BORDER_LINE("*".repeat(60)),
+    BORDER_LINE_STAR("*".repeat(60)),
+    BORDER_LINE_DASH("-".repeat(40)),
 
     CURRENT_USER_INFO("현재 고객 정보 : "),
 
@@ -37,7 +38,7 @@ public enum Text {
     ENTER_ADDRESS("배송지를 입력해주세요. "),
     ENTER_RECEIVER("배송받을 고객명을 입력하세요. "),
 
-    RECEIPT_USERINFO("---------------배송받을 고객 정보---------------"),
+    RECEIPT_USERINFO("------------배송받을 고객 정보-------------"),
 
     TOTAL_PRICE("주문 총금액 : "),
 

@@ -29,6 +29,7 @@ public class Cart implements CartInterface {
         boolean flag = false;
         for (int i = 0; i < mCartItem.size(); i++) {
             if (bookId.equals(mCartItem.get(i).getBookId())) {
+                // 해당 ID의 책이 이미 있으면 수량++
                 mCartItem.get(i).setQuantity(mCartItem.get(i).getQuantity() + 1);
                 flag = true;
             }
@@ -52,9 +53,9 @@ public class Cart implements CartInterface {
     public void printCart() {
         System.out.println("""
                 장바구니 상품 목록 :
-                ---------------------------------------
-                    도서ID \t|     수량 \t|      합계
-                ---------------------------------------""");
+                ----------------------------------------
+                    도서ID \t|    수량  \t|      합계
+                ----------------------------------------""");
         for (int i = 0; i < mCartItem.size(); i++) {
             CartItem cartItem = mCartItem.get(i);
             System.out.printf("  %s  |     %d     |     %d\n",
