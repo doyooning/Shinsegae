@@ -3,7 +3,10 @@ package BookMarket.com.market.main;
 import BookMarket.com.market.bookitem.Book;
 import BookMarket.com.market.cart.Cart;
 import BookMarket.com.market.common.ErrorCode;
+import BookMarket.com.market.common.Text;
+import BookMarket.com.market.common.ValidCheck;
 import BookMarket.com.market.exception.CartException;
+import BookMarket.com.market.exception.MainException;
 import BookMarket.com.market.member.Admin;
 import BookMarket.com.market.member.User;
 
@@ -17,20 +20,21 @@ import java.util.Scanner;
 
 public class Welcome {
     // statics
-    static Scanner sc = new Scanner(System.in);
-	static Cart mCart = new Cart();
-	static User mUser;
-    static SimpleDateFormat sdf = new SimpleDateFormat("yyMMddhhmmss");
-    static SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+    private static ValidCheck validCheck = new ValidCheck();
 
-    static final String MAIN_MENU_NUM = "[1-9]";
+    static Scanner sc = new Scanner(System.in);
+    static Cart mCart = new Cart();
+    static User mUser;
+    static SimpleDateFormat sdfFull = new SimpleDateFormat("yyMMddhhmmss");
+    static SimpleDateFormat sdfShort = new SimpleDateFormat("MM/dd/yyyy");
+
     static boolean flag = false;
     static int mTotalBook = 0;
     static ArrayList<Book> mBookList = new ArrayList<Book>();
 
     // main
 	public static void main(String[] args) {
-        bookListOnSale(mBookList);
+
         mUser = guestInfoInit();
         run();
 	}
@@ -38,10 +42,10 @@ public class Welcome {
     // methods
     // 실행 전 데이터 세팅(객체 생성)
     public static User guestInfoInit() {
-        System.out.print("당신의 이름을 입력하세요 : ");
+        System.out.print(Text.ENTER_USERNAME.getText());
         String userName = sc.nextLine();
 
-        System.out.print("연락처를 입력하세요 : ");
+        System.out.print(Text.ENTER_PHONE.getText());
         String userMobile = sc.nextLine();
 
         return new User(userName, userMobile);
@@ -49,111 +53,88 @@ public class Welcome {
 
     public static void run() {
         while (!flag) {
+            bookListOnSale(mBookList);
             menuIntroduction();
             try {
-                System.out.print("메뉴 번호를 선택해주세요 ");
+                System.out.print(Text.MENU_SELECT.getText());
                 String selectNum = sc.nextLine();
-                if (selectNum.matches(MAIN_MENU_NUM)) {
-                    switch (selectNum) {
-                        case "1" -> {
-                            menuGuestInfo(mUser.getName(), mUser.getPhone());
-                        }
-                        case "2" -> {
-                            menuCartItemList();
-                        }
-                        case "3" -> {
-                            menuCartClear();
-                        }
-                        case "4" -> {
-                            mTotalBook = totalFileToBookList();
-                            menuCartAddItem(mBookList);
-                        }
-                        case "5" -> {
-                            menuCartUpdateItemCount();
-                        }
-                        case "6" -> {
-                            menuCartRemoveItem();
-                        }
-                        case "7" -> {
-                            menuCartBill();
-                        }
-                        case "8" -> {
-                            menuExit();
-                        }
-                        case "9" -> {
-                            menuAdminLogin();
-                        }
+                validCheck.isMenuValid(selectNum);
+                switch (selectNum) {
+                    case "1" -> {
+                        menuGuestInfo(mUser.getName(), mUser.getPhone());
                     }
-                } else {
-                    System.out.println("1부터 9까지의 숫자를 입력하세요.");
+                    case "2" -> {
+                        menuCartItemList();
+                    }
+                    case "3" -> {
+                        menuCartClear();
+                    }
+                    case "4" -> {
+                        menuCartAddItem(mBookList);
+                    }
+                    case "5" -> {
+                        menuCartUpdateItemCount();
+                    }
+                    case "6" -> {
+                        menuCartRemoveItem();
+                    }
+                    case "7" -> {
+                        menuCartBill();
+                    }
+                    case "8" -> {
+                        menuExit();
+                    }
+                    case "9" -> {
+                        menuAdminLogin();
+                    }
                 }
-            } catch (CartException e) {
+            } catch (MainException | CartException e) {
                 System.out.println(e.getMessage());
-                flag = true;
-            } catch (Exception e) {
-                System.out.println("잘못된 접근입니다.");
-                flag = true;
+                run();
             }
         }
-
     }
 
 	public static void menuIntroduction() {
-        String header = """
-                \t\t\t\tWelcome to Shopping Mall
-                \t\t\t\tWelcome to Book Market!""";
-
-        System.out.println("*".repeat(60));
-        System.out.println(header);
-        System.out.println("*".repeat(60));
-        System.out.println("""
-                1. 고객 정보 확인하기       \t6. 장바구니의 항목 삭제하기
-                2. 장바구니 상품 목록 보기   \t7. 영수증 표시하기
-                3. 장바구니 비우기          \t8. 종료
-                4. 장바구니에 항목 추가하기   \t9. 관리자 로그인
-                5. 장바구니 항목 수량 변경""");
-        System.out.println("*".repeat(60));
+        System.out.println(Text.BORDER_LINE.getText());
+        System.out.println(Text.HEADER.getText());
+        System.out.println(Text.BORDER_LINE.getText());
+        System.out.println(Text.MAIN_MENU.getText());
+        System.out.println(Text.BORDER_LINE.getText());
     }
 
     // 고객 정보 확인하기
 	public static void menuGuestInfo(String name, String mobile) {
-		System.out.println("현재 고객 정보 : ");
-		System.out.println("이름 " + mUser.getName() + "   연락처 " + mUser.getPhone());
+		System.out.println(Text.CURRENT_USER_INFO.getText());
+		System.out.println(Text.USERNAME.getText() + mUser.getName() + "   " + Text.PHONE.getText() + mUser.getPhone());
 	}
 
     // 장바구니 상품 목록 보기
 	public static void menuCartItemList() {
-		if (mCart.mCartCount > 0) {
-			mCart.printCart();
-		}
-
-        if (mCart.mCartCount == 0) {
-            System.out.println("장바구니에 항목이 없습니다.");
-        }
+        validCheck.isCartEmpty(mCart);
+        mCart.printCart();
 	}
 
 	// 장바구니 비우기
 	public static void menuCartClear() throws CartException{
-		if (mCart.mCartCount == 0) {
-			System.out.println("장바구니에 항목이 없습니다.");
-		} else {
-			System.out.println("장바구니의 모든 항목을 삭제하겠습니까? Y | N ");
-			String str = sc.nextLine();
+		validCheck.isCartEmpty(mCart);
+        System.out.println(Text.CART_CLEAR_CONFIRM.getText());
+        String str = sc.nextLine();
 
-			if (str.toUpperCase().equals("Y")) {
-				System.out.println("장바구니의 모든 항목을 삭제했습니다.");
-				mCart.clearBook();
-			}
+        if (str.toUpperCase().equals("Y")) {
+            System.out.println(Text.CART_CLEAR_COMPLETE.getText());
+            mCart.clearBook();
 		}
 	}
 
     // 장바구니 항목 추가
 	public static void menuCartAddItem(ArrayList<Book> booklist) {
-		mCart.printBookList(booklist);
+        mTotalBook = totalFileToBookList();
+        mCart.printBookList(booklist);
 		boolean quit = false;
 
 		while (!quit) {
-			System.out.print("장바구니에 추가할 도서의 ID를 입력하세요 : ");
+			System.out.print(Text.ENTER_BOOK_ID_ADD.getText());
 			String str = sc.nextLine();
 
 			boolean flag = false;
@@ -168,10 +149,10 @@ public class Welcome {
 			}
 
 			if (flag) {
-				System.out.println("장바구니에 추가하겠습니까? Y | N ");
+				System.out.println(Text.ITEM_ADD_CONFIRM.getText());
 				str = sc.nextLine();
 				if (str.toUpperCase().equals("Y")) {
-					System.out.println(booklist.get(numId).getBookId() + " 도서가 장바구니에 추가되었습니다.");
+					System.out.println(booklist.get(numId).getBookId() + Text.ITEM_ADD_COMPLETE.getText());
 					// 장바구니에 넣기
                     if (!isCartInBook((booklist.get(numId).getBookId()))) {
                         mCart.insertBook(booklist.get(numId));
@@ -193,7 +174,7 @@ public class Welcome {
             menuCartItemList();
             boolean quit = false;
             while (!quit) {
-                System.out.print("수량을 수정할 도서의 ID를 입력하세요 : ");
+                System.out.print(Text.ENTER_BOOK_ID_UPDATE.getText());
                 String str = sc.nextLine();
                 boolean flag = false;
                 int numId = -1;
@@ -205,11 +186,13 @@ public class Welcome {
                         break;
                     }
                 }
+
                 if (flag) {
-                    System.out.print("변경할 수량을 입력하세요(최소 1권) : ");
-                    int quantity = Integer.parseInt(sc.nextLine());
-                    mCart.mCartItem.get(numId).setQuantity(quantity);
-                    System.out.println("수량 변경이 완료되었습니다.");
+                    System.out.print(Text.UPDATE_BOOK_AMOUNT.getText());
+                    String quantity = sc.nextLine();
+                    validCheck.isValidQuantity(quantity);
+                    mCart.mCartItem.get(numId).setQuantity(Integer.parseInt(quantity));
+                    System.out.println(Text.UPDATE_BOOK_AMOUNT_COMPLETE.getText());
                     quit = true;
                 } else System.out.println("다시 입력해 주세요");
             }
@@ -224,7 +207,7 @@ public class Welcome {
 			menuCartItemList();
 			boolean quit = false;
 			while (!quit) {
-				System.out.print("장바구니에서 삭제할 도서의 ID를 입력하세요 : ");
+				System.out.print(Text.ENTER_BOOK_ID_REMOVE.getText());
 				String str = sc.nextLine();
 				boolean flag = false;
 				int numId = -1;
@@ -237,10 +220,10 @@ public class Welcome {
 					}
 				}
 				if (flag) {
-					System.out.println("장바구니의 항목을 삭제하겠습니까? Y | N ");
+					System.out.println(Text.ITEM_REMOVE_CONFIRM.getText());
 					str = sc.nextLine();
 					if (str.toUpperCase().equals("Y")) {
-						System.out.println(mCart.mCartItem.get(numId).getBookId() + " 도서가 장바구니에서 삭제되었습니다.");
+						System.out.println(mCart.mCartItem.get(numId).getBookId() + Text.ITEM_REMOVE_COMPLETE.getText());
 						mCart.removeCart(numId);
 					}
 					quit = true;
@@ -256,18 +239,18 @@ public class Welcome {
 		if (mCart.mCartCount == 0) {
 			throw new CartException(ErrorCode.EMPTY_CARTITEM);
 		} else {
-			System.out.println("배송받을 분은 고객 정보와 같습니까? Y | N");
+			System.out.println(Text.RECEIVER_EQUAL_CONFIRM.getText());
 			String str = sc.nextLine();
 			if (str.toUpperCase().equals("Y")) {
-				System.out.println("배송지를 입력해주세요. ");
+				System.out.println(Text.ENTER_ADDRESS.getText());
 				String address = sc.nextLine();
 				printBill(mUser.getName(), String.valueOf(mUser.getPhone()), address);
 			} else {
-				System.out.println("배송받을 고객명을 입력하세요. ");
+				System.out.println(Text.ENTER_RECEIVER.getText());
 				String name = sc.nextLine();
-				System.out.println("연락처를 입력하세요. ");
+				System.out.println(Text.ENTER_PHONE.getText());
 				String phone = sc.nextLine();
-				System.out.println("배송지를 입력하세요. ");
+				System.out.println(Text.ENTER_ADDRESS.getText());
 				String address = sc.nextLine();
 				printBill(name, phone, address);
 			}
@@ -277,11 +260,11 @@ public class Welcome {
     // 영수증 출력 로직
 	public static void printBill(String name, String phone, String address) {
 		Date date = new Date();
-		String strDate = formatter.format(date);
+		String strDate = sdfShort.format(date);
 		System.out.println();
-		System.out.println("---------------배송받을 고객 정보---------------");
-		System.out.println("고객명 : " + name + "  \t\t연락처 : " + phone);
-		System.out.println("배송지 : " + address + "\t\t발송일 : " + strDate);
+		System.out.println(Text.RECEIPT_USERINFO.getText());
+		System.out.println(Text.USERNAME.getText() + name + "  \t\t" + Text.PHONE.getText() + phone);
+		System.out.println(Text.ADDRESS.getText() + address + "\t\t" + Text.DATE.getText() + strDate);
 
 		mCart.printCart();
 
@@ -289,24 +272,21 @@ public class Welcome {
 		for (int i = 0; i < mCart.mCartCount; i++) {
 			sum += mCart.mCartItem.get(i).getTotalPrice();
 		}
-        System.out.printf("""
-                ---------------------------------------------
-                \\t\\t\\t주문 총금액 :  %d  원\\n
-                ---------------------------------------------
-                \n""", sum);
+
+        System.out.println(Text.BORDER_LINE.getText());
+        System.out.printf("\t\t\t%s %d  원\n", Text.TOTAL_PRICE.getText(), sum);
+        System.out.println(Text.BORDER_LINE.getText());
 	}
 
     // 종료
 	public static void menuExit() {
-		System.out.println("""
-                \n##################
-                    프로그램 종료
-                ##################""");
+		System.out.println(Text.EXIT_PROGRAM.getText());
         flag = true;
 	}
 
     // 판매중인 책 목록
 	public static void bookListOnSale(ArrayList<Book> booklist) {
+        mBookList.clear();
 		setFileToBookList(booklist);
 	}
 
@@ -317,69 +297,69 @@ public class Welcome {
 
     // 관리자 로그인
 	public static void menuAdminLogin() {
-		System.out.println("관리자 정보를 입력하세요");
+		System.out.println(Text.ENTER_ADMIN.getText());
 
-		System.out.print("아이디 : ");
+		System.out.print(Text.ID.getText());
 		String adminId = sc.nextLine();
 
-		System.out.print("비밀번호 : ");
+		System.out.print(Text.PW.getText());
 		String adminPW = sc.nextLine();
 
 		Admin admin = new Admin(mUser.getName(), mUser.getPhone());
 		if (adminId.equals(admin.getId()) && adminPW.equals(admin.getPassword())) {
 			String[] writeBook = new String[7];
-			System.out.println("도서 정보를 추가하겠습니까? Y | N ");
+			System.out.println(Text.ADD_BOOK_DATA_CONFIRM.getText());
 			String str = sc.nextLine();
 
 			if (str.toUpperCase().equals("Y")) {
 				Date date = new Date();
-				String strDate = sdf.format(date);
-				writeBook[0] = "ISBN" + strDate;
-				System.out.println("도서ID : " + writeBook[0]);
-				String st1 = sc.nextLine();
-				System.out.println("도서명 : ");
+				String strDate = sdfFull.format(date).substring(8, 12);
+				writeBook[0] = Text.BOOK_ISBN.getText() + strDate;
+				System.out.println(Text.BOOK_ID.getText() + writeBook[0]);
+//				String st1 = sc.nextLine();
+				System.out.print(Text.BOOK_TITLE.getText());
 				writeBook[1] = sc.nextLine();
-				System.out.println("가격 : ");
+				System.out.print(Text.BOOK_PRICE.getText());
 				writeBook[2] = sc.nextLine();
-				System.out.println("저자 : ");
+				System.out.print(Text.BOOK_AUTHOR.getText());
 				writeBook[3] = sc.nextLine();
-				System.out.println("설명 : ");
+				System.out.print(Text.BOOK_DESCRIPTION.getText());
 				writeBook[4] = sc.nextLine();
-				System.out.println("분야 : ");
+				System.out.print(Text.BOOK_CATEGORY.getText());
 				writeBook[5] = sc.nextLine();
-				System.out.println("출판일 : ");
+				System.out.print(Text.BOOK_RELEASE_DATE.getText());
 				writeBook[6] = sc.nextLine();
 
 				try {
-					FileWriter fw = new FileWriter("src\\BookMarket\\com\\bookitem\\book.txt", true);
+					FileWriter fw = new FileWriter("src\\BookMarket\\com\\market\\bookitem\\book.txt", true);
 
 					for (int i = 0; i < 7; i++) {
 						fw.write(writeBook[i] + "\n");
-						fw.close();
-						System.out.println("새 도서 정보가 저장되었습니다.");
 					}
-				} catch (Exception e) {
+                    fw.close();
+                    System.out.println(Text.BOOK_SAVED.getText());
+                } catch (Exception e) {
 					System.out.println(e);
 				}
 
 			} else {
-				System.out.println("이름 " + admin.getName() + "   연락처 " + admin.getPhone());
-				System.out.println("아이디 " + admin.getId() + "   비밀번호 " + admin.getPassword());
+				System.out.println(Text.USERNAME.getText() + admin.getName() + "   " + Text.PHONE.getText() + admin.getPhone());
+				System.out.println(Text.ID.getText() + admin.getId() + "   " + Text.PW.getText() + admin.getPassword());
 			}
 		} else
 			System.out.println("관리자 정보가 일치하지 않습니다.");
 	}
 
-    // 도서 목록 불러오는 메서드
+    // 도서 목록의 총 도서 개수
 	public static int totalFileToBookList() {
 		try {
-			FileReader fr = new FileReader("src\\BookMarket\\com\\bookitem\\book.txt");
+			FileReader fr = new FileReader("src\\BookMarket\\com\\market\\bookitem\\book.txt");
 			BufferedReader br = new BufferedReader(fr);
 
 			String str;
 			int num = 0;
 			while ((str = br.readLine()) != null) {
-				if(str.contains("ISBN")) {
+				if(str.contains(String.valueOf(Text.BOOK_ISBN.getText()))) {
 					num++;
 				}
 			}
@@ -396,14 +376,14 @@ public class Welcome {
     // 도서 목록 저장
 	public static void setFileToBookList(ArrayList<Book> booklist) {
 		try {
-			FileReader fr = new FileReader("src\\BookMarket\\com\\bookitem\\book.txt");
+			FileReader fr = new FileReader("src\\BookMarket\\com\\market\\bookitem\\book.txt");
 			BufferedReader br = new BufferedReader(fr);
 
 			String str2;
 			String[] readBook = new String[7];
 
 			while ((str2 = br.readLine()) != null) {
-				if(str2.contains("ISBN")) {
+				if(str2.contains(String.valueOf(Text.BOOK_ISBN.getText()))) {
 					readBook[0] = str2;
 					readBook[1] = br.readLine();
 					readBook[2] = br.readLine();

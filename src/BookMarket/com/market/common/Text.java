@@ -51,19 +51,22 @@ public enum Text {
     PW("비밀번호 : "),
     ADD_BOOK_DATA_CONFIRM("도서 정보를 추가하겠습니까? Y | N "),
 
+    BOOK_ISBN("ISBN"),
     BOOK_ID("도서ID : "),
     BOOK_TITLE("도서명 : "),
     BOOK_PRICE("가격 : "),
     BOOK_AUTHOR("저자 : "),
     BOOK_DESCRIPTION("설명 : "),
     BOOK_CATEGORY("분야 : "),
-    BOOK_RELEASE_DATE("출판일 : "),
+    BOOK_RELEASE_DATE("출판일(yyyy/mm/dd) : "),
 
-    BOOK_LOAD_PATH("src\\BookMarket\\com\\bookitem\\book.txt"),
+    BOOK_FILE_PATH("src\\BookMarket\\com\\market\\bookitem\\book.txt"),
     BOOK_SAVED("새 도서 정보가 저장되었습니다."),
 
     USERNAME("이름 "),
-    PHONE("연락처 ");
+    PHONE("연락처 "),
+    ADDRESS("배송지 "),
+    DATE("발송일 ");
 
 
     private final String text;
