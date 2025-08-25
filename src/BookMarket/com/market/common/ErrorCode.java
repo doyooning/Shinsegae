@@ -11,8 +11,12 @@ public enum ErrorCode {
 
     INVALID_ADMIN_INFO("관리자 정보가 일치하지 않습니다."),
 
-    EMPTY_CARTITEM("장바구니에 항목이 없습니다.");
+    EMPTY_CARTITEM("장바구니에 항목이 없습니다."),
 
+    FILE_NOT_FOUND("도서 목록을 불러오는 중 오류가 발생하였습니다."),
+    FILE_IO_ERROR("도서 목록 입출력 중 오류가 발생하였습니다."),
+
+    CRITICAL_ERROR("프로그램을 다시 실행하여 주십시오.");
 
     private String msg;
 

@@ -17,6 +17,13 @@ public class ValidCheck {
         }
     }
 
+    // 도서 목록 유효 검사
+    public void isBookListValid(int totalBook) {
+        if (totalBook < 0) {
+            throw new MainException(ErrorCode.CRITICAL_ERROR);
+        }
+    }
+
     // Y/N 선택 메뉴 유효 검사
     public void isYesOrNo(String str) {
         if (!(str.matches(SELECT_YES_NO))) {

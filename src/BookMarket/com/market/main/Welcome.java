@@ -2,6 +2,7 @@ package BookMarket.com.market.main;
 
 import BookMarket.com.market.bookitem.Book;
 import BookMarket.com.market.cart.Cart;
+import BookMarket.com.market.common.ErrorCode;
 import BookMarket.com.market.common.Text;
 import BookMarket.com.market.common.ValidCheck;
 import BookMarket.com.market.exception.CartException;
@@ -9,13 +10,10 @@ import BookMarket.com.market.exception.MainException;
 import BookMarket.com.market.member.Admin;
 import BookMarket.com.market.member.User;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Scanner;
 
 public class Welcome {
@@ -52,9 +50,10 @@ public class Welcome {
 
     public static void run() {
         while (!flag) {
-            bookListOnSale(mBookList);
-            menuIntroduction();
             try {
+                bookListOnSale(mBookList);
+                validCheck.isBookListValid(mTotalBook);
+                menuIntroduction();
                 System.out.print(Text.MENU_SELECT.getText());
                 String selectNum = sc.nextLine();
                 validCheck.isMenuValid(selectNum);
@@ -71,6 +70,8 @@ public class Welcome {
                 }
             } catch (MainException | CartException e) {
                 System.out.println(e.getMessage());
+                run();
+            } catch (Exception e) {
                 run();
             }
         }
@@ -160,9 +161,9 @@ public class Welcome {
             }
         }
         validCheck.isPresentBookId(flag);
-
         System.out.print(Text.UPDATE_BOOK_AMOUNT.getText());
         String quantity = sc.nextLine();
+
         validCheck.isValidQuantity(quantity);
         mCart.mCartItem.get(numId).setQuantity(Integer.parseInt(quantity));
         mCart.mCartItem.get(numId).updateTotalPrice();
@@ -305,7 +306,10 @@ public class Welcome {
                     }
                     fw.close();
                     System.out.println(Text.BOOK_SAVED.getText());
+                } catch (FileNotFoundException e) {
+                    System.out.println(ErrorCode.FILE_NOT_FOUND);
                 } catch (Exception e) {
+                    System.out.println(ErrorCode.FILE_IO_ERROR);
                     System.out.println(e);
                 }
             }
@@ -332,40 +336,46 @@ public class Welcome {
 			br.close();
 			fr.close();
 			return num;
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-		return 0;
+		} catch (FileNotFoundException e) {
+            System.out.println(ErrorCode.FILE_NOT_FOUND);
+        } catch (Exception e) {
+            System.out.println(ErrorCode.FILE_IO_ERROR);
+            System.out.println(e);
+        }
+		return -1;
 	}
 
     // 도서 목록 저장
 	public static void setFileToBookList(ArrayList<Book> booklist) {
-		try {
-			FileReader fr = new FileReader("src\\BookMarket\\com\\market\\bookitem\\book.txt");
-			BufferedReader br = new BufferedReader(fr);
+        try {
+            FileReader fr = new FileReader("src\\BookMarket\\com\\market\\bookitem\\book.txt");
+            BufferedReader br = new BufferedReader(fr);
 
-			String str;
-			String[] readBook = new String[7];
+            String str;
+            String[] readBook = new String[7];
 
-			while ((str = br.readLine()) != null) {
-				if(str.contains(Text.BOOK_ISBN.getText())) {
-					readBook[0] = str;
-					readBook[1] = br.readLine();
-					readBook[2] = br.readLine();
-					readBook[3] = br.readLine();
-					readBook[4] = br.readLine();
-					readBook[5] = br.readLine();
-					readBook[6] = br.readLine();
-				}
-				Book bookitem = new Book(readBook[0], readBook[1],
-						Integer.parseInt(readBook[2]), readBook[3],
-						readBook[4], readBook[5], readBook[6]);
-				booklist.add(bookitem);
-			}
-			br.close();
-			fr.close();
-		} catch (Exception e) {
-			System.out.println(e);
-		}
+            while ((str = br.readLine()) != null) {
+                if (str.contains(Text.BOOK_ISBN.getText())) {
+                    readBook[0] = str;
+                    readBook[1] = br.readLine();
+                    readBook[2] = br.readLine();
+                    readBook[3] = br.readLine();
+                    readBook[4] = br.readLine();
+                    readBook[5] = br.readLine();
+                    readBook[6] = br.readLine();
+                }
+                Book bookitem = new Book(readBook[0], readBook[1],
+                        Integer.parseInt(readBook[2]), readBook[3],
+                        readBook[4], readBook[5], readBook[6]);
+                booklist.add(bookitem);
+            }
+            br.close();
+            fr.close();
+        } catch (FileNotFoundException e) {
+            System.out.println(ErrorCode.FILE_NOT_FOUND);
+        } catch (Exception e) {
+            System.out.println(ErrorCode.FILE_IO_ERROR);
+            System.out.println(e);
+        }
 	}
 }
