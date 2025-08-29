@@ -33,7 +33,7 @@ public class ChatServer {
                 if (map.containsKey(nickname)) {
                     pw.println("ERR: 중복되는 이름입니다.");
                     socket.close();
-                } else if ((nickname.isEmpty())) {
+                } else if (nickname.isBlank()) {
                     pw.println("ERR: 이름을 입력하여 주십시오.");
                     socket.close();
                 } else if (nickname.contains(" ")) {
@@ -47,6 +47,9 @@ public class ChatServer {
 
         } catch (IOException e) {
             System.err.println("[서버] 에러 발생: " + e.getMessage());
+        } finally {
+            POOL.shutdownNow();
+            Runtime.getRuntime().exit(0);
         }
     }
 
@@ -79,7 +82,6 @@ public class ChatServer {
                         case "/quit" -> {
                             System.out.println(nickname + " disconnected");
                             break Chat;
-//                            broadcast(nickname + " left");
                         }
                         case "/who" -> {
                             String str = String.join(", ", nickList);
