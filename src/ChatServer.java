@@ -16,7 +16,7 @@ public class ChatServer {
     private static ConcurrentHashMap<String, PrintWriter> map = new ConcurrentHashMap<>();
     private static List<String> nickList = Collections.synchronizedList(new ArrayList<>());
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         System.out.println("[서버] 서버 시작: " + PORT);
         // Ctrl+C 시 스레드 풀 정리
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
