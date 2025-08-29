@@ -28,7 +28,7 @@ public class ChatServer {
             while (true) {
                 System.out.println("클라이언트 대기중");
                 Socket socket = serverSocket.accept();
-                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
                 String nickname = br.readLine();
                 if (map.containsKey(nickname)) {
                     PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
@@ -52,7 +52,7 @@ public class ChatServer {
         ClientHandler(Socket socket, String nickname) {
             this.socket = socket;
             this.nickname = nickname;
-            System.out.println(nickname + " Connected");
+            System.out.println(nickname + " connected");
         }
 
         @Override
@@ -68,10 +68,13 @@ public class ChatServer {
                 nickList.add(nickname);
 
                 String contents;
+                Chat:
                 while ((contents = br.readLine()) != null) {
                     switch (contents) {
                         case "/quit" -> {
-                            broadcast(nickname + " left");
+                            System.out.println(nickname + " disconnected");
+                            break Chat;
+//                            broadcast(nickname + " left");
                         }
                         case "/who" -> {
                             String str = String.join(", ", nickList);
