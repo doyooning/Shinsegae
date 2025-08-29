@@ -33,6 +33,12 @@ public class ChatServer {
                 if (map.containsKey(nickname)) {
                     pw.println("ERR: 중복되는 이름입니다.");
                     socket.close();
+                } else if ((nickname.isEmpty())) {
+                    pw.println("ERR: 이름을 입력하여 주십시오.");
+                    socket.close();
+                } else if (nickname.contains(" ")) {
+                    pw.println("ERR: 공백은 허용되지 않습니다.");
+                    socket.close();
                 } else {
                     pw.println(nickname + " joined");
                     POOL.submit(new ClientHandler(socket, nickname));

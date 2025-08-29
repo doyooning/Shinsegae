@@ -35,7 +35,6 @@ public class ChatClient {
             String msg;
             Chat:
             while (true) {
-//                System.out.print("Enter Message> ");
                 msg = keyboard.readLine();
                 switch (msg) {
                     case "" -> {
@@ -76,8 +75,12 @@ public class ChatClient {
                 while ((resp = br.readLine()) != null) {
                     System.out.println(resp); // 서버로부터의 메시지 출력
                 }
+                System.out.println("서버가 종료되었습니다. 프로그램을 종료합니다.");
             } catch (IOException e) {
                 System.out.println("서버와의 연결이 끊어졌습니다.");
+            } finally {
+                try { socket.close(); } catch (IOException ignored) {}
+                Runtime.getRuntime().exit(0);
             }
         }
     }
