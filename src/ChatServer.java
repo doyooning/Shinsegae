@@ -26,16 +26,15 @@ public class ChatServer {
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (true) {
-                System.out.println("클라이언트 대기중");
                 Socket socket = serverSocket.accept();
+                PrintWriter pw = new PrintWriter(socket.getOutputStream(), true, StandardCharsets.UTF_8);
                 BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
                 String nickname = br.readLine();
                 if (map.containsKey(nickname)) {
-                    PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
                     pw.println("ERR: 중복되는 이름입니다.");
                     socket.close();
-
                 } else {
+                    pw.println(nickname + " joined");
                     POOL.submit(new ClientHandler(socket, nickname));
                 }
             }

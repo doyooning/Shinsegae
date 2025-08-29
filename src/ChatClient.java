@@ -8,8 +8,8 @@ public class ChatClient {
 
     public static void main(String[] args) throws IOException {
         try (Socket socket = new Socket(host, port);
-//             BufferedReader br = new BufferedReader(
-//                     new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+             BufferedReader br = new BufferedReader(
+                     new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
              PrintWriter pw = new PrintWriter(
                      new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
              BufferedReader keyboard = new BufferedReader(
@@ -19,10 +19,18 @@ public class ChatClient {
             System.out.print("NICK ");
             String str = keyboard.readLine();
             pw.println(str);
-            System.out.println(str + " joined");
 
-            ServerListener serverListener = new ServerListener(socket);
-            new Thread(serverListener).start();
+            String rspn = br.readLine();
+            if ((rspn == null) || rspn.startsWith("ERR")) {
+                System.out.println(rspn);
+                socket.close();
+                return;
+            } else {
+                System.out.println(rspn);
+                ServerListener serverListener = new ServerListener(socket);
+                new Thread(serverListener).start();
+            }
+
             // 클라 -> 서버 채팅
             String msg;
             Chat:
@@ -45,7 +53,6 @@ public class ChatClient {
                         pw.println(msg);
                     }
                 }
-                // 서버 -> 클라 채팅
 
             }
         } catch (IOException e) {
@@ -62,6 +69,7 @@ public class ChatClient {
 
         @Override
         public void run() {
+            // 서버 -> 클라 채팅
             try (BufferedReader br = new BufferedReader(
                     new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));){
                 String resp;
