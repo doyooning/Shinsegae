@@ -8,8 +8,7 @@ import java.util.*;
 
 public class StudentOutput {
     // static
-    static String fileName = "student.dat";
-    static File pathName = new File("C:/Temp/" + fileName);
+    static File pathName = new File(StudentText.PATHNAME_S.getText());
     static HashMap<String, Student> studentInfo = new HashMap<>();
     static List<Student> datas = new ArrayList<>();
     static Set<String> keys; // 임시
@@ -35,12 +34,13 @@ public class StudentOutput {
             }
 
         } catch (EOFException e) {
-            System.out.println(StudentText.OUTPUT_TITLE_PRINT.getMsg());
+            System.out.println(StudentText.OUTPUT_TITLE_PRINT.getText());
 
         } catch (FileNotFoundException e) {
             System.out.println(ErrorCode.FILE_NOT_FOUND.getMsg());
 
         } catch (IOException | ClassNotFoundException e) {
+            System.out.println(ErrorCode.FILE_IO_ERROR.getMsg());
             e.printStackTrace();
         }
     }

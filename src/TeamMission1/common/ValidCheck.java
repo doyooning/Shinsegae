@@ -21,7 +21,7 @@ public class ValidCheck {
     public static void isNameValid(HashMap<String, Student> map, String name) {
         // 이름 중복 검사
         if (map.containsKey(name)) {
-            throw new StudentException(ErrorCode.ALREADY_EXISTS);
+            throw new StudentException(ErrorCode.ALREADY_EXISTS_NAME);
         }
     }
 

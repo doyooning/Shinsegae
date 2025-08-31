@@ -1,6 +1,14 @@
 package TeamMission1.common;
 
+import lombok.Getter;
+
+@Getter
 public enum StudentText {
+    FILENAME_S("student.dat"),
+    PATHNAME_S("C:/Temp/" + FILENAME_S.getText()),
+    FILENAME_O("orderByAvg.dat"),
+    PATHNAME_O("./" +  FILENAME_O.getText()),
+
     /*
     * StudentInput
     * */
@@ -21,23 +29,26 @@ public enum StudentText {
     /*
     * StudentOutput
     * */
-    OUTPUT_TITLE_PRINT("[평균 오름차순 성적표]");
-
-
+    OUTPUT_TITLE_PRINT("[평균 오름차순 성적표]"),
+    PRINT_SCORE("   점수: %s\n   총점: %d, 평균: %.1f, 학점: %s\n"),
 
     /*
      * SortedStudent
      * */
+    SORTED_TITLE_PRINT("[정렬 및 저장: 평균 오름차순]"),
+    LOAD_STUDENT_AMOUNT("불러온 학생 수: "),
+    SORT_RULES("정렬 규칙: 평균 ASC, 평균 동률이면 이름 사전순 ASC"),
 
+    SAVE_PREVIEW_TITLE("저장 대상(미리보기 상위 10명): "),
+    SAVE_PREVIEW_PRINT("- %s (평균 %.1f)\n"),
 
+    SAVE_FILE_PATH("결과 파일: " + PATHNAME_O.getText()),
+    SAVE_SORT_COMPLETE("[완료] 정렬된 결과를 파일로 저장했습니다.\n");
 
-    private String msg;
+    private final String text;
 
-    StudentText(String msg) {
-        this.msg = msg;
+    StudentText(String text) {
+        this.text = text;
     }
 
-    public String getMsg() {
-        return msg;
-    }
 }

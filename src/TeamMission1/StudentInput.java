@@ -13,9 +13,9 @@ import java.util.Map;
 
 public class StudentInput {
     // static
+    static String fileName = StudentText.FILENAME_S.getText();
+    static File pathName = new File(StudentText.PATHNAME_S.getText());
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static String fileName = "student.dat";
-    static File pathName = new File("C:/Temp/" + fileName);
     static ObjectInputStream ois = null;
     static ObjectOutputStream oos = null;
     static HashMap<String, Student> studentInfo = new HashMap<>();
@@ -55,7 +55,7 @@ public class StudentInput {
     }
 
     public static void printUsage() {
-        System.out.println(StudentText.PRINT_USAGE.getMsg());
+        System.out.println(StudentText.PRINT_USAGE.getText());
     }
 
     public static void checkKeyAndInputData() throws IOException {
@@ -66,25 +66,25 @@ public class StudentInput {
             inputScores = new ArrayList<>();
             scores = new ArrayList<>();
 
-            System.out.print(StudentText.NAME.getMsg());
+            System.out.print(StudentText.NAME.getText());
             String name = br.readLine();
             if (name.equals("^^")) {
                 break;
             }
 
-            System.out.print(StudentText.KOREAN.getMsg());
+            System.out.print(StudentText.KOREAN.getText());
             String korean = br.readLine();
             inputScores.add(korean);
 
-            System.out.print(StudentText.ENGLISH.getMsg());
+            System.out.print(StudentText.ENGLISH.getText());
             String english = br.readLine();
             inputScores.add(english);
 
-            System.out.print(StudentText.MATH.getMsg());
+            System.out.print(StudentText.MATH.getText());
             String math = br.readLine();
             inputScores.add(math);
 
-            System.out.print(StudentText.SCIENCE.getMsg());
+            System.out.print(StudentText.SCIENCE.getText());
             String science = br.readLine();
             inputScores.add(science);
 
@@ -106,10 +106,10 @@ public class StudentInput {
             double scoreAvg = (double) scoreSum / scores.size();
             Student student = new Student(name, scores, scoreSum, scoreAvg, getGrade(scoreAvg));
             studentInfo.put(name, student);
-            System.out.printf(StudentText.DATA_SAVED.getMsg(), name, scoreSum, scoreAvg, student.getGrade());
+            System.out.printf(StudentText.DATA_SAVED.getText(), name, scoreSum, scoreAvg, student.getGrade());
         }
-        System.out.println(StudentText.INPUT_EXIT.getMsg());
-        System.out.printf(StudentText.SAVE_COMPLETE.getMsg(), studentInfo.size(), fileName);
+        System.out.println(StudentText.INPUT_EXIT.getText());
+        System.out.printf(StudentText.SAVE_COMPLETE.getText(), studentInfo.size(), fileName);
     }
 
     public static void saveData() {
@@ -119,6 +119,7 @@ public class StudentInput {
             }
 
         } catch (IOException e) {
+            System.out.println(ErrorCode.FILE_IO_ERROR.getMsg());
             e.printStackTrace();
         }
     }

@@ -1,5 +1,6 @@
 package TeamMission1;
 
+import TeamMission1.common.StudentText;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,7 @@ public class Student implements Serializable {
 
     @Override
     public String toString() {
-        return "   점수: " + record + "\n"
-                + "   총점: " + total + ", 평균: " + average + ", 학점: " + grade + "\n";
+
+        return StudentText.PRINT_SCORE.getText();
     }
 }
