@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
 
-    FILE_NOT_FOUND("파일이 존재하지 않습니다. 새 파일을 생성합니다."),
+    FILE_NOT_FOUND("기존 파일이 존재하지 않습니다. 새 파일을 생성합니다.\n"),
 
     ALREADY_EXISTS_NAME("[오류] 이미 존재하는 이름입니다. 다른 이름을 입력하세요."),
     FILE_IO_ERROR("[오류] 파일 입출력 과정에서 오류가 발생하였습니다."),

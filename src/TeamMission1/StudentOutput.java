@@ -46,35 +46,19 @@ public class StudentOutput {
     }
 
     // 평균 기준 정렬
-    // 알고리즘 : 해시맵에서 키 get -> highestAvg 찾고 datas에 추가, 키 제거
     public static void rearrangeData() {
         // keys : 이름 키값들
         // names : 정렬된 이름 순서 보관
-        // datas : ArrayList<Student>, 가장 높은 평균 학생 추가
-        // studentInfo : HashMap<String, Student>, 학생 정보
         keys = studentInfo.keySet();
         names = new String[keys.size()];
         keys.stream().sorted().forEach(key -> {
             Arrays.fill(names, key);
         });
 
-//        double avgTemp = 0;
-        //            avgTemp = Math.max(avgTemp, s.getAverage());
-
+        // 평균 오름차순으로 datas 학생 목록 재구성
         datas.addAll(studentInfo.values());
         datas = datas.stream().sorted(Comparator.comparing(Student::getAverage))
                 .toList();
-
-//        Student highAvgSt = null;
-//        for (Student st : datas) {
-//            if (st.getAverage() == avgTemp) {
-//                highAvgSt = st;
-//                datas.clear();
-//                break;
-//            }
-//        }
-//        datas.add(highAvgSt);
-
     }
 
     // 정렬 결과 출력

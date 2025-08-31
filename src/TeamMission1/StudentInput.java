@@ -9,15 +9,12 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class StudentInput {
     // static
     static String fileName = StudentText.FILENAME_S.getText();
     static File pathName = new File(StudentText.PATHNAME_S.getText());
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static ObjectInputStream ois = null;
-    static ObjectOutputStream oos = null;
     static HashMap<String, Student> studentInfo = new HashMap<>();
     // studentInfo = 이름:학생
 
@@ -34,20 +31,26 @@ public class StudentInput {
     }
     public static void loadCheck() throws IOException {
         // 파일이 있나요?
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(pathName))){
-            while (true) {
-                Object obj = ois.readObject();
-                if (obj == null) {
-                    break;
-                }
-                System.out.println(obj);
+        if (!pathName.exists()) {
+            System.out.println(ErrorCode.FILE_NOT_FOUND.getMsg());
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(pathName))) {
+                oos.writeObject(new HashMap<String, Student>());
             }
+            return;
+        }
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(pathName))){
+            Object obj = ois.readObject();
+            if (obj instanceof HashMap) {
+                studentInfo = (HashMap<String, Student>) obj;
+            }
+            System.out.println(obj);
 
         } catch (FileNotFoundException e) { // 파일 없으면 만들기
-            System.out.println(ErrorCode.FILE_NOT_FOUND.getMsg());
-            oos = new ObjectOutputStream(new FileOutputStream(pathName));
-            oos.writeObject(null); // null 넣고 파일 만들어야지
-            oos.close();
+//            System.out.println(ErrorCode.FILE_NOT_FOUND.getMsg());
+//            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(pathName));
+//            oos.writeObject(new HashMap<String, Student>());
+//            oos.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -55,6 +58,7 @@ public class StudentInput {
     }
 
     public static void printUsage() {
+        System.out.println(StudentText.INPUT_TITLE_PRINT.getText());
         System.out.println(StudentText.PRINT_USAGE.getText());
     }
 
@@ -96,27 +100,30 @@ public class StudentInput {
                     scores.add(Integer.parseInt(score));
                 }
             } catch (StudentException e) {
-                checkKeyAndInputData();
+                System.out.println(e.getMessage());
+                System.out.println();
+                continue;
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             // 입력받은 정보 맵핑
+
             int scoreSum = scores.stream().mapToInt(Integer::intValue).sum();
             double scoreAvg = (double) scoreSum / scores.size();
             Student student = new Student(name, scores, scoreSum, scoreAvg, getGrade(scoreAvg));
             studentInfo.put(name, student);
             System.out.printf(StudentText.DATA_SAVED.getText(), name, scoreSum, scoreAvg, student.getGrade());
+            System.out.println();
         }
+
         System.out.println(StudentText.INPUT_EXIT.getText());
         System.out.printf(StudentText.SAVE_COMPLETE.getText(), studentInfo.size(), fileName);
     }
 
     public static void saveData() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(pathName))){
-            for (Map.Entry<String, Student> map : studentInfo.entrySet()) {
-                oos.writeObject(map);
-            }
+            oos.writeObject(studentInfo);
 
         } catch (IOException e) {
             System.out.println(ErrorCode.FILE_IO_ERROR.getMsg());

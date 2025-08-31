@@ -10,7 +10,8 @@ import java.util.TreeSet;
 
 public class SortedStudent {
     // static
-    static File pathName = new File(StudentText.PATHNAME_O.getText());
+    static File InputPathName = new File(StudentText.PATHNAME_S.getText());
+    static File OutputPathName = new File(StudentText.PATHNAME_O.getText());
     static HashMap<String, Student> studentInfo = new HashMap<>();
     static TreeSet<Student> treeSet;
 
@@ -33,7 +34,7 @@ public class SortedStudent {
     }
 
     public static void loadObjectFromFile() {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(pathName))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(InputPathName))) {
             while (true) {
                 Object obj = ois.readObject();
                 studentInfo = (HashMap<String, Student>) obj;
@@ -54,10 +55,10 @@ public class SortedStudent {
 
     // 트리셋 구성 및 정렬
     public static void createTreeSet() {
-        treeSet = new TreeSet<>(Comparator.comparing(Student::getAverage)
-        .thenComparing(Student::getName));
+        treeSet = new TreeSet<>(new StudentComparator());
         treeSet.addAll(studentInfo.values());
         System.out.println(StudentText.SORT_RULES.getText());
+        System.out.println();
     }
 
 
@@ -76,13 +77,28 @@ public class SortedStudent {
 
     // 저장하기
     public static void outputObject() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(pathName))) {
-            oos.writeObject(treeSet);
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(OutputPathName))) {
+            TreeSet<Student> newTreeSet = treeSet;
+            oos.writeObject(newTreeSet);
 
         } catch (IOException e) {
             System.out.println(ErrorCode.FILE_IO_ERROR.getMsg());
             e.printStackTrace();
         }
+        System.out.println();
+        System.out.println(StudentText.SAVE_FILE_PATH.getText());
         System.out.println(StudentText.SAVE_SORT_COMPLETE.getText());
+    }
+
+    public static class StudentComparator implements Comparator<Student>, Serializable {
+        private static final long serialVersionUID = 1L;
+        @Override
+        public int compare(Student s1, Student s2) {
+            int result = Double.compare(s1.getAverage(), s2.getAverage());
+            if (result != 0) {
+                return result;
+            }
+            return s1.getName().compareTo(s2.getName());
+        }
     }
 }

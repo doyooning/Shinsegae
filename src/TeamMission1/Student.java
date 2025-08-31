@@ -23,6 +23,6 @@ public class Student implements Serializable {
     @Override
     public String toString() {
 
-        return StudentText.PRINT_SCORE.getText();
+        return String.format(StudentText.PRINT_SCORE.getText(), record, total, average, grade);
     }
 }
