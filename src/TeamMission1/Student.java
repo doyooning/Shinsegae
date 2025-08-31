@@ -18,4 +18,10 @@ public class Student implements Serializable {
     private double average;
     private String grade;
     // toString() 구현 필요
+
+    @Override
+    public String toString() {
+        return "   점수: " + record + "\n"
+                + "   총점: " + total + ", 평균: " + average + ", 학점: " + grade + "\n";
+    }
 }

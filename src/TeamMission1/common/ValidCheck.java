@@ -1,7 +1,7 @@
 package TeamMission1.common;
 
-import java_advanced_01.TeamMission1.Student;
-import java_advanced_01.TeamMission1.exception.StudentException;
+import TeamMission1.Student;
+import TeamMission1.exception.StudentException;
 
 import java.util.HashMap;
 

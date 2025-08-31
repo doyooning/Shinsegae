@@ -1,9 +1,9 @@
 package TeamMission1;
 
-import java_advanced_01.TeamMission1.common.ErrorCode;
-import java_advanced_01.TeamMission1.common.StudentText;
-import java_advanced_01.TeamMission1.common.ValidCheck;
-import java_advanced_01.TeamMission1.exception.StudentException;
+import TeamMission1.common.ErrorCode;
+import TeamMission1.common.StudentText;
+import TeamMission1.common.ValidCheck;
+import TeamMission1.exception.StudentException;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class StudentInput {
-
+    // static
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static String fileName = "student.dat";
     static File pathName = new File("C:/Temp/" + fileName);
@@ -106,10 +106,10 @@ public class StudentInput {
             double scoreAvg = (double) scoreSum / scores.size();
             Student student = new Student(name, scores, scoreSum, scoreAvg, getGrade(scoreAvg));
             studentInfo.put(name, student);
-            System.out.printf("=> %s %s (총점=%d, 평균=%.1f, 학점=%s)\n",StudentText.DATA_SAVED.getMsg(), name, scoreSum, scoreAvg, student.getGrade());
+            System.out.printf(StudentText.DATA_SAVED.getMsg(), name, scoreSum, scoreAvg, student.getGrade());
         }
         System.out.println(StudentText.INPUT_EXIT.getMsg());
-        System.out.printf("[완료] %d명의 정보가 %s 에 저장되었습니다.\n", studentInfo.size(), fileName);
+        System.out.printf(StudentText.SAVE_COMPLETE.getMsg(), studentInfo.size(), fileName);
     }
 
     public static void saveData() {
